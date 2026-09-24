@@ -1085,8 +1085,19 @@ function onReelReady(clip) {
 function buildReel() {
   const videos = Array.prototype.slice.call(document.querySelectorAll('video[data-frame^="reel-"]'));
   // Без движения видео в сцену не берём: остаются фигурами с плеерами.
+  // На узком экране — тоже: там ролики живут каруселью из вёрстки (reels.js)
+  // поверх сцены. Один закреплённый 3D-ролик под кнопками читался как
+  // «видео одно», а телефонам с тесной памятью сцена без видео легче.
   if (!videos.length || reduced.matches) return;
-  const list = narrow ? videos.slice(0, 1) : videos;
+  if (narrow) {
+    // Лёгкая копия первого ролика — и для карусели. preload="none":
+    // смена src ничего не качает, пока читатель не нажмёт play.
+    for (let i = 0; i < videos.length; i++) {
+      if (videos[i].dataset.srcSm) videos[i].src = videos[i].dataset.srcSm;
+    }
+    return;
+  }
+  const list = videos;
   // Ролики, которые сцена не берёт, со страницы убираем: иначе рядом с
   // 3D-роликом стояли бы их фолбэк-плееры. Возвращаем их при потере
   // контекста — там страница снова становится фолбэком целиком.

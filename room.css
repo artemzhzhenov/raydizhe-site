@@ -293,6 +293,65 @@ h2.slate { line-height: 1.4; }
   .reels { grid-template-columns: repeat(3, 1fr); align-items: start; justify-items: center; }
 }
 .reels .shot.shot-video { width: 100%; max-width: 14rem; }
+.reel-dots { display: none; }
+
+/* Телефон: ролики всегда в вёрстке (scene.js не берёт их в сцену ниже
+   900px) — лента с листанием вбок, по одному, соседи выглядывают из-за
+   краёв, чтобы было видно: роликов больше. Лента выходит за поля .wrap до
+   краёв экрана, первый и последний ролик встают по центру за счёт полей
+   самой ленты. Точки под лентой ставит reels.js. */
+@media (max-width: 899.98px) {
+  #follow .reels {
+    --slide: min(72vw, 20rem);
+    display: flex;
+    gap: .9rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-inline: calc(-1 * var(--gap));
+    padding-inline: calc((100vw - var(--slide)) / 2);
+    scroll-padding-inline: calc((100vw - var(--slide)) / 2);
+  }
+  #follow .reels::-webkit-scrollbar { display: none; }
+  #follow .reels .shot.shot-video {
+    flex: 0 0 var(--slide);
+    width: var(--slide);
+    max-width: none;
+    margin: 0;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .55);
+  }
+  #follow .reel-dots {
+    display: flex;
+    justify-content: center;
+    gap: .35rem;
+    margin-top: .9rem;
+  }
+  .reel-dots button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .reel-dots button::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--bone) 35%, transparent);
+    transition: background .3s, transform .3s;
+  }
+  .reel-dots button[aria-current="true"]::before {
+    background: var(--amber);
+    transform: scale(1.25);
+  }
+}
 
 /* .btn-ghost в base.css написан для ссылок: у <button> свой шрифт и кегль
    от браузера, наследование включаем здесь. */

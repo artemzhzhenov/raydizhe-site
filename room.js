@@ -23,6 +23,11 @@ function hasWebGL() {
   }
 }
 
+// Карусель роликов на телефоне — со сценой и без неё одинаково.
+import('./reels.js').then(function (m) { m.startReels(); }).catch(function (err) {
+  console.warn('room: карусель роликов не запустилась —', err && err.message);
+});
+
 if (document.getElementById('room') && hasWebGL()) {
   import('./scene.js').then(function () {
     // Шёлк со стихами на «Авторе» — после сцены: вуаль, из которой он
