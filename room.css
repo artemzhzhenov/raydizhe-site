@@ -293,7 +293,7 @@ h2.slate { line-height: 1.4; }
   .reels { grid-template-columns: repeat(3, 1fr); align-items: start; justify-items: center; }
 }
 .reels .shot.shot-video { width: 100%; max-width: 14rem; }
-.reel-dots { display: none; }
+.reel-dots, .reel-play { display: none; }
 
 /* Телефон: ролики всегда в вёрстке (scene.js не берёт их в сцену ниже
    900px) — лента с листанием вбок, по одному, соседи выглядывают из-за
@@ -321,8 +321,62 @@ h2.slate { line-height: 1.4; }
     margin: 0;
     scroll-snap-align: center;
     scroll-snap-stop: always;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, .55);
+    cursor: pointer;
+    /* Края растворяются, как у портретов каста (.cast-frame выше): те же
+       пороги, ролик тоже 9:16. Бокс гасит бока, само видео — верх и низ. */
+    -webkit-mask-image: linear-gradient(to right,
+      rgba(0,0,0,0) 0%, rgba(0,0,0,.156) 8.44%, rgba(0,0,0,.5) 16.89%,
+      rgba(0,0,0,.844) 25.33%, #000 33.78%, #000 66.22%,
+      rgba(0,0,0,.844) 74.67%, rgba(0,0,0,.5) 83.11%,
+      rgba(0,0,0,.156) 91.56%, rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to right,
+      rgba(0,0,0,0) 0%, rgba(0,0,0,.156) 8.44%, rgba(0,0,0,.5) 16.89%,
+      rgba(0,0,0,.844) 25.33%, #000 33.78%, #000 66.22%,
+      rgba(0,0,0,.844) 74.67%, rgba(0,0,0,.5) 83.11%,
+      rgba(0,0,0,.156) 91.56%, rgba(0,0,0,0) 100%);
   }
+  #follow .reels .shot-video video {
+    -webkit-mask-image: linear-gradient(to bottom,
+      rgba(0,0,0,0) 0%, rgba(0,0,0,.156) 4.75%, rgba(0,0,0,.5) 9.5%,
+      rgba(0,0,0,.844) 14.25%, #000 19%, #000 81%,
+      rgba(0,0,0,.844) 85.75%, rgba(0,0,0,.5) 90.5%,
+      rgba(0,0,0,.156) 95.25%, rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to bottom,
+      rgba(0,0,0,0) 0%, rgba(0,0,0,.156) 4.75%, rgba(0,0,0,.5) 9.5%,
+      rgba(0,0,0,.844) 14.25%, #000 19%, #000 81%,
+      rgba(0,0,0,.844) 85.75%, rgba(0,0,0,.5) 90.5%,
+      rgba(0,0,0,.156) 95.25%, rgba(0,0,0,0) 100%);
+  }
+  /* Кнопка ▶ по центру вместо полосы плеера — полоса растворилась бы в
+     нижнем крае. Пока ролик играет, кнопка уходит. */
+  .reel-play {
+    display: block;
+    position: absolute;
+    inset: 50% auto auto 50%;
+    z-index: 2;
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--bone) 35%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--night) 45%, transparent);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    transition: opacity .35s;
+  }
+  .reel-play::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -6px;
+    border-style: solid;
+    border-width: 10px 0 10px 17px;
+    border-color: transparent transparent transparent var(--bone);
+  }
+  .is-playing .reel-play { opacity: 0; pointer-events: none; }
   #follow .reel-dots {
     display: flex;
     justify-content: center;

@@ -16,6 +16,49 @@ export function startReels() {
   const videos = slides.map(function (s) { return s.querySelector('video'); });
   if (slides.length < 2) return;
 
+  // Свои кнопки вместо полосы плеера: края ролика растворяются, как у
+  // портретов каста, и системная полоса внизу растворилась бы вместе с
+  // ними. Нажатие по ролику — play со звуком (жест читателя), ещё раз —
+  // пауза. Только узкий экран: на широком плеером правит сцена или
+  // обычные controls.
+  const plays = slides.map(function (slide, i) {
+    const v = videos[i];
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'reel-play';
+    b.setAttribute('aria-label', 'Play reel ' + (i + 1));
+    slide.appendChild(b);
+    slide.addEventListener('click', function () {
+      if (!narrowQuery.matches || !v) return;
+      if (v.paused) {
+        v.muted = false;
+        const p = v.play();
+        if (p && p.catch) p.catch(function () {});
+      } else {
+        v.pause();
+      }
+    });
+    if (v) {
+      v.addEventListener('play', function () { slide.classList.add('is-playing'); });
+      v.addEventListener('pause', function () { slide.classList.remove('is-playing'); });
+    }
+    return b;
+  });
+  function applyMode() {
+    const on = narrowQuery.matches;
+    for (let i = 0; i < videos.length; i++) {
+      const v = videos[i];
+      // Ролик, взятый сценой (.frame-on), не трогаем: там controls
+      // выключила она сама.
+      if (!v || slides[i].classList.contains('frame-on')) continue;
+      v.controls = !on;
+      v.tabIndex = on ? -1 : 0;
+      plays[i].hidden = !on;
+    }
+  }
+  applyMode();
+  if (narrowQuery.addEventListener) narrowQuery.addEventListener('change', applyMode);
+
   const dots = document.createElement('p');
   dots.className = 'reel-dots';
   dots.setAttribute('aria-label', 'Reels');
