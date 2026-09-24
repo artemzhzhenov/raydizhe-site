@@ -225,10 +225,6 @@ h2.slate { line-height: 1.4; }
     text-shadow: 0 1px 10px rgba(0, 0, 0, .55), 0 1px 3px rgba(0, 0, 0, .7);
   }
 
-  /* Плашки .episode из base.css непрозрачны и на узком экране закрывают kiss,
-     ради которого сделан подъезд. Подложка полупрозрачная: текст читается
-     (плюс тень выше), кадр просвечивает. Токен тот же, новых цветов нет. */
-  #episodes .episode { background: color-mix(in srgb, var(--coal) 62%, transparent); }
 }
 
 /* ── Лента эпизодов уже кадра ───────────────────────────────────────────── */
@@ -384,3 +380,41 @@ button.btn-ghost {
 /* Третья кнопка, «Write to Diana», на узком экране уходит на вторую строку —
    без зазора по вертикали строки кнопок слипаются. */
 .follow-row { display: flex; flex-wrap: wrap; gap: .75rem .5rem; }
+
+/* ── Эпизоды: светлая дымка вместо плашек ───────────────────────────────── */
+/* Номера и даты убраны (25.09). Вместо тёмных прямоугольных плашек с
+   волосяными линиями каждая фраза лежит в мягком тёплом пятне света: в
+   центре светлее фона, к краям растворяется без границы. Это обратный ход
+   к кадрам на сайте — у них края темнеют и уходят во тьму, у фраз светлеют.
+   На узком экране под светом ещё мягкая тёмная подложка (см. выше), потому
+   что там лента лежит поверх кадра kiss. */
+#episodes .episodes {
+  background: none;
+  gap: clamp(0.5rem, 1.6vh, 1.1rem);
+}
+#episodes .episode {
+  grid-template-columns: 1fr auto;
+  padding: clamp(1.1rem, 2.8vw, 2rem) clamp(1.25rem, 3.5vw, 2.5rem);
+  background: radial-gradient(ellipse 68% 62% at 50% 50%,
+    color-mix(in srgb, var(--amber) 20%, transparent),
+    color-mix(in srgb, var(--bone) 8%, transparent) 52%,
+    transparent 76%);
+}
+@media (max-width: 599.98px) {
+  #episodes .episode { grid-template-columns: 1fr; }
+}
+/* Узкий экран: лента лежит поверх кадра kiss — под светом мягкая тёмная
+   подложка, тоже без границ, иначе фраза на светлых местах снимка гаснет.
+   Стоит после общего правила, иначе оно перебило бы это. */
+@media (max-width: 899.98px) {
+  #episodes .episode {
+    background:
+      radial-gradient(ellipse 72% 62% at 50% 50%,
+        color-mix(in srgb, var(--amber) 18%, transparent),
+        color-mix(in srgb, var(--bone) 7%, transparent) 52%,
+        transparent 80%),
+      radial-gradient(ellipse 80% 75% at 50% 50%,
+        color-mix(in srgb, var(--coal) 62%, transparent) 40%,
+        transparent 82%);
+  }
+}

@@ -59,18 +59,15 @@
 
   const box = document.querySelector("[data-episodes]");
   if (box && Array.isArray(D.episodes) && D.episodes.length) {
-    const fmt = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" });
     box.textContent = "";
-    D.episodes.forEach((ep, i) => {
+    // Номер и дата эпизода на странице не показываются (решено 25.09):
+    // дата остаётся в данных — по ней держится порядок ленты.
+    D.episodes.forEach(ep => {
       const row = document.createElement("article");
       row.className = "episode reveal";
-      const n = String(D.episodes.length - i).padStart(2, "0");
       row.innerHTML =
-        '<p class="meta"><span class="ep-no"></span><span class="ep-date"></span></p>' +
         '<p class="line ep-line"></p>' +
         '<a class="btn-ghost ep-link" target="_blank" rel="noopener">watch</a>';
-      row.querySelector(".ep-no").textContent = "EP " + n;
-      row.querySelector(".ep-date").textContent = fmt.format(new Date(ep.date + "T12:00:00"));
       row.querySelector(".ep-line").textContent = ep.line;
       row.querySelector(".ep-link").href = ep.url;
       box.append(row);
