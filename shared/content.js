@@ -43,6 +43,34 @@ window.SOULS = {
     },
     counters: "https://pulse.raydizhe.com/counters.json"
   },
+  /* Форма «сообщить о выходе» (финал страницы, #notify). Адреса принимает
+   * наш сервер (ops/souls-notify), версия согласия — имя файла
+   * ops/souls-notify/consent/<version>.txt: новый текст формы = новая версия
+   * и там, и здесь. Обои лежат в gift/, имена — по slug.
+   * Списки для телефона и компьютера разные: у автора вертикальные и
+   * горизонтальные фото не совпадают. line — подпись, которая печатается на
+   * обоях (слоган у пар и трио, имя героя у одиночных портретов); её читает
+   * tools/wallpapers/render.mjs. */
+  notify: {
+    endpoint: "https://pulse.raydizhe.com/api/notify",
+    version: "2026-10-a",
+    gift: {
+      phone: [
+        { slug: "tessa-sam",   title: "Tessa & Sam",   line: "Two loves." },
+        { slug: "tessa-ethan", title: "Tessa & Ethan", line: "One lifelong friendship." },
+        { slug: "triangle",    title: "The three of them", line: "One impossible choice." },
+        { slug: "ethan",       title: "Ethan", line: "Ethan" },
+        { slug: "sam",         title: "Sam",   line: "Sam" }
+      ],
+      desktop: [
+        { slug: "tessa-sam",   title: "Tessa & Sam",   line: "Two loves." },
+        { slug: "tessa-ethan", title: "Tessa & Ethan", line: "One lifelong friendship." },
+        { slug: "triangle",    title: "The three of them", line: "One impossible choice." },
+        { slug: "ethan",       title: "Ethan", line: "Ethan" },
+        { slug: "sam",         title: "Sam",   line: "Sam" }
+      ]
+    }
+  },
   audience: {
     readers: "20,000+",
     views: "1,900,000+",

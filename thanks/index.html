@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>You're on the list — RayDi Zhe</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314100D'/%3E%3Cpath d='M16 6c-4 6-4 11 0 15c4-4 4-9 0-15z' fill='%23D9A05B'/%3E%3Cpath d='M16 21v6' stroke='%23D9A05B' stroke-width='2' stroke-linecap='round' opacity='.55'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../shared/base.css">
+<link rel="stylesheet" href="../notify.css">
+</head>
+<body>
+<!-- Сюда приёмник переводит форму, отправленную без JS. Обои — те же, что в
+     финале; без JS — прямые ссылки на файлы. Текст — черновик до «да» автора. -->
+<main class="page">
+  <div class="wrap">
+    <h2 class="slate">RELEASE DAY</h2>
+    <h3 class="notify-ink">You're on the list</h3>
+    <p class="line">Your gift — wallpapers from the book</p>
+    <div class="gift" id="gift-static">
+      <div class="gift-switch" role="group" aria-label="Wallpaper size">
+        <button type="button" class="btn-ghost" data-kind="phone" aria-pressed="false">Phone</button>
+        <button type="button" class="btn-ghost" data-kind="desktop" aria-pressed="false">Desktop</button>
+      </div>
+      <div class="gift-grid"></div>
+      <p class="meta gift-hint"></p>
+      <noscript>
+        <p class="meta">Phone: <a href="../gift/raydizhe-wallpaper-phone-tessa-sam.jpg">Tessa &amp; Sam</a> · <a href="../gift/raydizhe-wallpaper-phone-tessa-ethan.jpg">Tessa &amp; Ethan</a> · <a href="../gift/raydizhe-wallpaper-phone-triangle.jpg">The three of them</a> · <a href="../gift/raydizhe-wallpaper-phone-ethan.jpg">Ethan</a> · <a href="../gift/raydizhe-wallpaper-phone-sam.jpg">Sam</a></p>
+        <p class="meta">Desktop: <a href="../gift/raydizhe-wallpaper-desktop-tessa-sam.jpg">Tessa &amp; Sam</a> · <a href="../gift/raydizhe-wallpaper-desktop-tessa-ethan.jpg">Tessa &amp; Ethan</a> · <a href="../gift/raydizhe-wallpaper-desktop-triangle.jpg">The three of them</a> · <a href="../gift/raydizhe-wallpaper-desktop-ethan.jpg">Ethan</a> · <a href="../gift/raydizhe-wallpaper-desktop-sam.jpg">Sam</a></p>
+      </noscript>
+    </div>
+    <template id="gift-card">
+      <figure class="gift-card">
+        <a class="gift-open" href=""><img alt="" loading="lazy"></a>
+        <figcaption>
+          <p class="gift-title"></p>
+          <a class="btn-ghost gift-download" href="" download>Download</a>
+        </figcaption>
+      </figure>
+    </template>
+    <dialog id="gift-view" class="gift-view" aria-label="Wallpaper">
+      <img alt="">
+      <p class="meta gift-view-hint">Press and hold the image to save it</p>
+      <button type="button" class="btn-ghost gift-close">Close</button>
+    </dialog>
+    <p><a class="back" href="../">← Back to the book</a></p>
+  </div>
+</main>
+<script src="../../shared/content.js"></script>
+<script type="module">
+  // Обои — тот же набор, что в финале (SOULS.notify.gift), но своя короткая копия рендера: у этой страницы другой базовый путь (../gift/), а notify.js завязан на форму.
+  import { giftKind, giftFile, giftList, STORAGE_KEY } from '../notify-core.js';
+  const cfg = (window.SOULS && window.SOULS.notify) || { gift: {} };
+  const gift = document.getElementById('gift-static');
+  const grid = gift.querySelector('.gift-grid'), hint = gift.querySelector('.gift-hint');
+  const tpl = document.getElementById('gift-card'), view = document.getElementById('gift-view');
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  const buttons = gift.querySelectorAll('[data-kind]');
+  function render(kind) {
+    grid.dataset.kind = kind; grid.textContent = '';
+    giftList(cfg.gift, kind).forEach(function (w) {
+      const n = tpl.content.cloneNode(true);
+      const img = n.querySelector('img'), open = n.querySelector('.gift-open'), dl = n.querySelector('.gift-download');
+      img.src = '../' + giftFile(kind, w.slug, true); img.alt = w.title + ' — wallpaper for ' + kind;
+      open.href = dl.href = '../' + giftFile(kind, w.slug);
+      if (!coarse) { open.target = '_blank'; open.rel = 'noopener'; }
+      n.querySelector('.gift-title').textContent = w.title;
+      open.addEventListener('click', function (ev) {
+        if (!coarse || typeof view.showModal !== 'function') return;
+        ev.preventDefault(); view.querySelector('img').src = open.href; view.querySelector('img').alt = img.alt; view.showModal();
+      });
+      grid.appendChild(n);
+    });
+    buttons.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.kind === kind ? 'true' : 'false'); });
+    hint.textContent = kind === 'phone' ? (coarse ? 'Tap a wallpaper, then press and hold to save it.' : 'Phone wallpapers, 1290 × 2796.') : 'Desktop wallpapers, 3840 × 2160.';
+  }
+  buttons.forEach(function (b) { b.addEventListener('click', function () { render(b.dataset.kind); }); });
+  view.querySelector('.gift-close').addEventListener('click', function () { view.close(); });
+  view.addEventListener('click', function (ev) { if (ev.target === view) view.close(); });
+  view.addEventListener('close', function () { const big = view.querySelector('img'); big.src = ''; big.alt = ''; });
+  try { localStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
+  render(giftKind(innerWidth, coarse));
+</script>
+</body>
+</html>

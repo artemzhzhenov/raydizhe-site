@@ -1,0 +1,135 @@
+/* Форма «сообщить о выходе» и подарок — финал страницы (#notify) и
+ * служебные страницы (privacy/, thanks/, try-again/). Токены, ритм,
+ * кнопки — из shared/base.css; здесь только то, чего там нет.
+ */
+
+/* Рукописный шрифт для «You're on the list». Тот же файл использует
+   sheets.js (листки со стихами) через FontFace — двойной загрузки не будет,
+   браузер отдаст его из кэша. */
+@font-face {
+  font-family: "Homemade Apple"; font-style: normal; font-weight: 400; font-display: block;
+  src: url(../assets/fonts/homemade-apple-400.woff2) format("woff2");
+}
+
+/* ── Ссылка на титуле ─────────────────────────────────────────────────── */
+.notify-cta a {
+  color: var(--amber);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--amber) 40%, transparent);
+  padding-bottom: .15em;
+}
+.notify-cta a:hover, .notify-cta a:focus-visible { border-bottom-color: currentColor; }
+
+/* ── Блок формы ───────────────────────────────────────────────────────── */
+.notify { max-width: 40rem; }
+.notify > * + * { margin-top: clamp(0.75rem, 2vh, 1.25rem); }
+.notify-title { font-size: clamp(2rem, 4.5vw, 3rem); }
+.notify-line { font-size: clamp(1.1rem, 2vw, 1.5rem); }
+
+.notify-form > * + * { margin-top: 0.9rem; }
+.notify-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.notify-row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: stretch; }
+.notify-label {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.notify-input {
+  flex: 1 1 14rem;
+  min-width: 0;
+  font: inherit;
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  color: var(--bone);
+  background: color-mix(in srgb, var(--coal) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bone) 35%, transparent);
+  border-radius: 999px;
+  padding: 0.75em 1.2em;
+  transition: border-color .25s;
+}
+.notify-input::placeholder { color: color-mix(in srgb, var(--bone) 45%, transparent); }
+.notify-input:focus { outline: none; border-color: var(--amber); }
+.notify-input[aria-invalid="true"] { border-color: color-mix(in srgb, var(--amber) 70%, #c0392b); }
+/* .btn в base.css написан для ссылок — кнопке отдаём шрифт явно. */
+.notify-submit { font: inherit; font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.1em; cursor: pointer; }
+.notify[data-state="sending"] .notify-submit { opacity: .55; pointer-events: none; }
+
+.notify-error { color: var(--amber); min-height: 1.2em; text-transform: none; letter-spacing: 0.04em; }
+.notify-error:empty { min-height: 0; margin-top: 0; }
+
+.notify-check { display: flex; gap: .6em; align-items: baseline; font-size: clamp(0.95rem, 1.4vw, 1.05rem); cursor: pointer; }
+.notify-check input { accent-color: var(--amber); width: 1.05em; height: 1.05em; flex: none; transform: translateY(.1em); }
+.notify-fine { text-transform: none; letter-spacing: 0.04em; color: color-mix(in srgb, var(--bone) 60%, transparent); }
+.notify-fine a { color: var(--amber); }
+
+/* ── Успех: чернила ───────────────────────────────────────────────────── */
+.notify[data-state="done"] .notify-form { display: none; }
+.notify-done[hidden] { display: none; }
+.notify-done > * + * { margin-top: clamp(0.75rem, 2vh, 1.25rem); }
+.notify-ink {
+  margin: 0;
+  font-family: "Homemade Apple", cursive;
+  font-weight: 400;
+  width: fit-content; max-width: 100%; /* градиент чернил идёт по словам, а не по ширине блока */
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1.5;
+  color: transparent;
+  background: linear-gradient(90deg, var(--amber) 0 50%, transparent 50% 100%);
+  background-size: 200% 100%;
+  background-position: 0 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+/* Проявление слева направо: градиент едет из «весь прозрачный» в «весь
+   янтарный». При prefers-reduced-motion base.css гасит анимации — остаётся
+   покой, а покой у нас и есть конечное состояние (position 0). */
+.notify-ink.is-writing { animation: ink 1.6s cubic-bezier(.4, 0, .2, 1) both; }
+@keyframes ink {
+  from { background-position: 100% 0; }
+  to   { background-position: 0 0; }
+}
+
+/* ── Обои ─────────────────────────────────────────────────────────────── */
+.gift > * + * { margin-top: 1rem; }
+.gift-switch { display: flex; gap: .5rem; }
+.gift-switch .btn-ghost { font: inherit; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; cursor: pointer; }
+.gift-switch .btn-ghost[aria-pressed="true"] { background: var(--amber); color: var(--night); border-color: var(--amber); }
+.gift-grid { display: grid; gap: var(--gap); grid-template-columns: repeat(3, 1fr); }
+.gift-grid[data-kind="desktop"] { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 599.98px) { .gift-grid { grid-template-columns: repeat(3, 1fr); gap: .6rem; } }
+@media (max-width: 599.98px) { .gift-grid[data-kind="desktop"] { grid-template-columns: 1fr; } }
+.gift-card { margin: 0; }
+.gift-card > * + * { margin-top: .5rem; }
+.gift-open { display: block; }
+.gift-open img {
+  width: 100%; height: auto; display: block;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--coal) 70%, transparent); /* рамка видна до загрузки */
+  /* Мягкие края, как у портретов каста. */
+  -webkit-mask-image: radial-gradient(ellipse 96% 96% at 50% 50%, #000 70%, transparent 100%);
+  mask-image: radial-gradient(ellipse 96% 96% at 50% 50%, #000 70%, transparent 100%);
+}
+.gift-grid[data-kind="phone"] .gift-open img { aspect-ratio: 1290 / 2796; } /* размер известен до загрузки — высота блока не скачет */
+.gift-grid[data-kind="desktop"] .gift-open img { aspect-ratio: 16 / 9; }
+.gift-title { margin: 0; font-family: var(--prose); font-style: italic; color: var(--amber); font-size: clamp(0.95rem, 1.4vw, 1.1rem); }
+.gift-download { font-size: 0.68rem; padding: 0.55em 1em; }
+/* На сенсорном экране «Download» бессмысленна (браузер Instagram её не
+   понимает) — открывается лайтбокс с подсказкой «press and hold». */
+@media (pointer: coarse) { .gift-download { display: none; } }
+.gift-hint { text-transform: none; letter-spacing: 0.04em; }
+
+html:has(.gift-view[open]) { overflow: hidden; } /* страница не ездит под лайтбоксом */
+.gift-view { border: 0; padding: 0; background: transparent; max-width: 100vw; max-height: 100vh; width: 100%; height: 100%; margin: 0; }
+.gift-view::backdrop { background: rgba(20, 16, 13, .96); }
+.gift-view[open] { display: grid; place-items: center; grid-template-rows: 1fr auto auto; gap: .8rem; padding: 1rem; }
+.gift-view img { max-width: 100%; max-height: 82svh; height: auto; object-fit: contain; }
+.gift-view-hint { color: var(--bone); text-transform: none; letter-spacing: 0.04em; }
+.gift-close { font: inherit; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; cursor: pointer; }
+
+/* ── Служебные страницы ───────────────────────────────────────────────── */
+.page { min-height: 100svh; display: grid; align-content: center; padding: clamp(4rem, 10vh, 8rem) var(--gap); }
+.page .wrap { max-width: 44rem; }
+.page .prose p { font-size: clamp(1rem, 1.4vw, 1.15rem); }
+.page h2:not(.slate) { font-size: clamp(1.4rem, 2.6vw, 2rem); }
+.page .prose h2 { margin-top: 1.8em; margin-bottom: 0.5em; }
+.page .prose .meta { margin-top: 2em; font-size: 0.7rem; color: color-mix(in srgb, var(--bone) 55%, transparent); }
+.page .back { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); text-decoration: none; }

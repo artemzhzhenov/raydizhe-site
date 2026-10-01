@@ -23,6 +23,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314100D'/%3E%3Cpath d='M16 6c-4 6-4 11 0 15c4-4 4-9 0-15z' fill='%23D9A05B'/%3E%3Cpath d='M16 21v6' stroke='%23D9A05B' stroke-width='2' stroke-linecap='round' opacity='.55'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../shared/base.css">
 <link rel="stylesheet" href="room.css">
+<link rel="stylesheet" href="notify.css">
 </head>
 <body>
 
@@ -39,6 +40,7 @@
   <a href="#episodes">Episodes</a>
   <a href="#author">Author</a>
   <a href="#follow">Follow</a>
+  <a href="#notify">Notify me</a>
 </nav>
 
 <main id="main" tabindex="-1">
@@ -53,6 +55,8 @@
       </figure>
       <p class="line">Two loves. One lifelong friendship. One impossible choice.</p>
       <p class="meta">Completed novel · preparing for release</p>
+      <!-- Ведёт к форме в финале (#notify). Текст — черновик до «да» автора. -->
+      <p class="meta notify-cta"><a href="#notify" data-notify-spot="title">Get notified on release day ↓</a></p>
       <p class="follow-row">
         <a class="btn" data-link="facebook" href="https://www.facebook.com/profile.php?id=61592874008419" target="_blank" rel="noopener">Follow the story</a>
         <a class="btn-ghost" data-link="instagram" href="https://www.instagram.com/raydizhe" target="_blank" rel="noopener">Instagram</a>
@@ -235,6 +239,57 @@
   <!-- 9 · Финал -->
   <section id="follow" class="scene reveal">
     <div class="wrap">
+      <!-- Форма «сообщить о выходе». Без JS отправляется сама: приёмник
+           отвечает переходом на /thanks/ или /try-again/. С JS — notify.js:
+           ответ без перезагрузки, «You're on the list» и обои прямо здесь.
+           Адрес приёмника и версия согласия — из shared/content.js (notify),
+           значения в action и v ниже — те же, на случай, если content.js не
+           загрузился. Тексты — черновик до «да» автора. -->
+      <div id="notify" class="notify" data-state="idle">
+        <h2 class="slate">RELEASE DAY</h2>
+        <h2 class="notify-title">Be the first to know</h2>
+        <p class="line notify-line">One letter from me on the day the book comes out. Nothing else.</p>
+        <form id="notify-form" class="notify-form" method="post" action="https://pulse.raydizhe.com/api/notify" novalidate>
+          <input type="hidden" name="v" value="2026-10-a">
+          <input type="hidden" name="spot" value="follow">
+          <!-- Ловушка для ботов: люди её не видят и не заполняют. -->
+          <div class="notify-hp" aria-hidden="true"><label>Leave this empty <input type="text" name="hp" tabindex="-1" autocomplete="off"></label></div>
+          <div class="notify-row">
+            <label class="notify-label" for="notify-email">Email</label>
+            <input id="notify-email" class="notify-input" type="email" name="email" placeholder="your@email.com" autocomplete="email" inputmode="email" required maxlength="254" aria-describedby="notify-error">
+            <button type="submit" class="btn notify-submit">Notify me</button>
+          </div>
+          <p id="notify-error" class="notify-error meta" role="alert"></p>
+          <label class="notify-check"><input type="checkbox" name="future" value="1"> <span>Also tell me about future books</span></label>
+          <p class="notify-fine meta">By signing up you agree to receive that email. <a href="privacy/">What I keep and why →</a></p>
+        </form>
+        <div class="notify-done" hidden>
+          <h3 class="notify-ink" aria-live="polite">You're on the list</h3>
+          <p class="line notify-gift-line">Your gift — wallpapers from the book</p>
+          <div class="gift">
+            <div class="gift-switch" role="group" aria-label="Wallpaper size">
+              <button type="button" class="btn-ghost" data-kind="phone" aria-pressed="false">Phone</button>
+              <button type="button" class="btn-ghost" data-kind="desktop" aria-pressed="false">Desktop</button>
+            </div>
+            <div class="gift-grid"></div>
+            <p class="meta gift-hint"></p>
+          </div>
+        </div>
+      </div>
+      <template id="gift-card">
+        <figure class="gift-card">
+          <a class="gift-open" href=""><img alt="" loading="lazy"></a>
+          <figcaption>
+            <p class="gift-title"></p>
+            <a class="btn-ghost gift-download" href="" download>Download</a>
+          </figcaption>
+        </figure>
+      </template>
+      <dialog id="gift-view" class="gift-view" aria-label="Wallpaper">
+        <img alt="">
+        <p class="meta gift-view-hint">Press and hold the image to save it</p>
+        <button type="button" class="btn-ghost gift-close">Close</button>
+      </dialog>
       <p class="follow-row">
         <a class="btn" data-link="facebook" href="https://www.facebook.com/profile.php?id=61592874008419" target="_blank" rel="noopener">Follow the story</a>
         <a class="btn-ghost" data-link="instagram" href="https://www.instagram.com/raydizhe" target="_blank" rel="noopener">Instagram</a>
@@ -268,5 +323,6 @@
 <script src="../shared/content.js" defer></script>
 <script src="../shared/page.js" defer></script>
 <script src="room.js" type="module"></script>
+<script src="notify.js" type="module"></script>
 </body>
 </html>

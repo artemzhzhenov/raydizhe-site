@@ -1375,9 +1375,16 @@ const LAST = BEATS.length - 1;
 let centers = [];
 
 function measure() {
-  centers = BEATS.map(function (b) {
+  centers = BEATS.map(function (b, i) {
     const el = document.getElementById(b.id);
-    return el ? el.offsetTop + el.offsetHeight / 2 : 0;
+    if (!el) return 0;
+    // Последняя остановка (финал) якорится не к центру секции, а к её
+    // первому экрану: финал растёт, когда форма «сообщить о выходе»
+    // сменяется обоями, и центр уезжал бы ниже середины экрана — камера
+    // откатывалась к «Следующей книге». Так последняя остановка держится
+    // весь хвост страницы, сколько бы в нём ни было.
+    if (i === BEATS.length - 1) return el.offsetTop + Math.min(el.offsetHeight, window.innerHeight) / 2;
+    return el.offsetTop + el.offsetHeight / 2;
   });
 }
 
@@ -1650,6 +1657,14 @@ document.addEventListener('visibilitychange', function () {
 
 window.addEventListener('resize', function () {
   resize();
+  measure();
+  if (!running) { staticBeat = -1; settle(); }
+});
+
+/* Форма «сообщить о выходе» в финале меняет высоту секции, когда сменяется
+ * обоями (notify.js шлёт souls:layout). Центры секций — заново, как после
+ * загрузки кадра; в тихом цикле (reduced motion) ещё и переставить камеру. */
+window.addEventListener('souls:layout', function () {
   measure();
   if (!running) { staticBeat = -1; settle(); }
 });

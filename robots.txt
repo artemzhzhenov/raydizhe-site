@@ -1,4 +1,7 @@
 User-agent: *
+Disallow: /thanks/
+Disallow: /try-again/
+Disallow: /gift/
 Allow: /
 
 Sitemap: https://raydizhe.com/sitemap.xml
