@@ -57,14 +57,14 @@ window.SOULS = {
     gift: {
       phone: [
         { slug: "tessa-sam",   title: "Tessa & Sam",   line: "Two loves." },
-        { slug: "tessa-ethan", title: "Tessa & Ethan", line: "One lifelong friendship." },
+        { slug: "tessa-ethan", title: "Tessa & Ethan", line: "Two loves." },
         { slug: "triangle",    title: "The three of them", line: "One impossible choice." },
         { slug: "ethan",       title: "Ethan", line: "Ethan" },
         { slug: "sam",         title: "Sam",   line: "Sam" }
       ],
       desktop: [
         { slug: "tessa-sam",   title: "Tessa & Sam",   line: "Two loves." },
-        { slug: "tessa-ethan", title: "Tessa & Ethan", line: "One lifelong friendship." },
+        { slug: "tessa-ethan", title: "Tessa & Ethan", line: "Two loves." },
         { slug: "triangle",    title: "The three of them", line: "One impossible choice." },
         { slug: "ethan",       title: "Ethan", line: "Ethan" },
         { slug: "sam",         title: "Sam",   line: "Sam" }
